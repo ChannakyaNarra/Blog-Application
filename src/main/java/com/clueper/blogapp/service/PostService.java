@@ -1,13 +1,14 @@
 package com.clueper.blogapp.service;
 
 import com.clueper.blogapp.payload.PostDto;
+import com.clueper.blogapp.payload.PostResponse;
 
 import java.util.List;
 
 public interface PostService {
     PostDto createPost(PostDto postDto);
 
-    List<PostDto> getAllPosts();
+    PostResponse getAllPosts(int pageNo, int pageSize);
 
     PostDto getPostById(Long id);
 

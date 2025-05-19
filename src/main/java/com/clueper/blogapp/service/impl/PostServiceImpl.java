@@ -4,8 +4,12 @@ package com.clueper.blogapp.service.impl;
 import com.clueper.blogapp.entity.Post;
 import com.clueper.blogapp.exception.ResourceNotFoundException;
 import com.clueper.blogapp.payload.PostDto;
+import com.clueper.blogapp.payload.PostResponse;
 import com.clueper.blogapp.repository.PostRepository;
 import com.clueper.blogapp.service.PostService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,11 +38,33 @@ public class PostServiceImpl implements PostService {
 
     // Retrieves all posts and returns them as a list of DTOs
     @Override
-    public List<PostDto> getAllPosts() {
-        return postRepository.findAll()
-                .stream()
-                .map(post -> mapToDto(post)) // Convert each entity to DTO
-                .collect(Collectors.toList());
+    public PostResponse getAllPosts(int pageNo, int pageSize) {
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+
+        Page<Post> posts = postRepository.findAll(pageable);
+        List<Post> postList = posts.getContent();
+
+        List<PostDto> content =  postList.stream()
+                                        .map(post -> mapToDto(post)) // Convert each entity to DTO
+                                        .collect(Collectors.toList());
+
+        // Create a PostResponse object to hold the response data
+        PostResponse postResponse = new PostResponse();
+        postResponse.setContent(content);
+        postResponse.setPageNumber(posts.getNumber());
+        postResponse.setPageSize(posts.getSize());
+        postResponse.setTotalElements(posts.getTotalElements());
+        postResponse.setLastPage(posts.isLast());
+        postResponse.setTotalPages(posts.getTotalPages());
+        postResponse.setNumberOfElements(posts.getNumberOfElements());
+        postResponse.setFirstPage(posts.isFirst());
+        postResponse.setEmpty(posts.isEmpty());
+        postResponse.setHasNext(posts.hasNext());
+        postResponse.setHasContent(posts.hasContent());
+        postResponse.setHasPrevious(posts.hasPrevious());
+
+        return postResponse;
     }
 
     // Retrieves a post by its ID and returns it as a DTO

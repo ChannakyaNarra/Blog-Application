@@ -1,6 +1,7 @@
 package com.clueper.blogapp.controller;
 
 import com.clueper.blogapp.payload.PostDto;
+import com.clueper.blogapp.payload.PostResponse;
 import com.clueper.blogapp.service.PostService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,9 +25,12 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PostDto>> getAllPosts() {
-        List<PostDto> posts = postService.getAllPosts();
-        return ResponseEntity.ok(posts);
+    public ResponseEntity<PostResponse> getAllPosts(
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize
+            ) {
+        PostResponse response = postService.getAllPosts(pageNo, pageSize);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")

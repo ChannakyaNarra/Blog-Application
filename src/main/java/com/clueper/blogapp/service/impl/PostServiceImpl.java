@@ -10,6 +10,7 @@ import com.clueper.blogapp.service.PostService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,9 +39,11 @@ public class PostServiceImpl implements PostService {
 
     // Retrieves all posts and returns them as a list of DTOs
     @Override
-    public PostResponse getAllPosts(int pageNo, int pageSize) {
+    public PostResponse getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir) {
 
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        // Set the sorting direction
+        Sort sort = sortDir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
 
         Page<Post> posts = postRepository.findAll(pageable);
         List<Post> postList = posts.getContent();
@@ -103,10 +106,6 @@ public class PostServiceImpl implements PostService {
         // Delete the post
         postRepository.delete(post);
     }
-
-
-
-
 
 
     // Helper method to convert PostDto to Post entity

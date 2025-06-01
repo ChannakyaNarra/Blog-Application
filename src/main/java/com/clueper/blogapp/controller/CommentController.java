@@ -41,4 +41,20 @@ public class CommentController {
         CommentDto comment = commentService.getCommentById(postId, commentId);
         return ResponseEntity.ok(comment);
     }
+
+    // Endpoint to update a specific comment by post ID and comment ID
+    @PutMapping("/{commentId}")
+    public ResponseEntity<CommentDto> updateComment(@RequestBody CommentDto commentDto, @PathVariable(value = "postId") Long postId, @PathVariable(value = "commentId") Long commentId) {
+        // Call the service to update the comment and return the response
+        CommentDto updatedComment = commentService.updateComment(commentDto, postId, commentId);
+        return ResponseEntity.ok(updatedComment);
+    }
+
+
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<String> deleteComment(@PathVariable(value = "postId") Long postId, @PathVariable(value = "commentId") Long commentId){
+
+        commentService.deleteComment(postId, commentId);
+        return ResponseEntity.ok("Deleted Successfully");
+    }
 }
